@@ -69,9 +69,14 @@ public abstract class CodecFactory {
     return new BZip2Codec.Option();
   }
 
-  /** zstandard codec.*/
-  public static CodecFactory zstandardCodec() {
-    return new ZstandardCodec.Option();
+  /** zstandard codec, with specific compression level.
+   *
+   * @param compressionLevel should be between -5 and 22, inclusive.
+   * Negative levels are 'fast' modes akin to lz4 or snappy,
+   * levels above 9 are generally for archival purposes,
+   * and levels above 18 use a lot of memory. */
+  public static CodecFactory zstandardCodec(int compressionLevel) {
+    return new ZstandardCodec.Option(compressionLevel);
   }
 
   /** Creates internal Codec. */
@@ -85,13 +90,14 @@ public abstract class CodecFactory {
 
   public static final int DEFAULT_DEFLATE_LEVEL = Deflater.DEFAULT_COMPRESSION;
   public static final int DEFAULT_XZ_LEVEL = XZCodec.DEFAULT_COMPRESSION;
+  public static final int DEFAULT_ZSTANDARD_LEVEL = 3;
 
   static {
     addCodec(DataFileConstants.NULL_CODEC, nullCodec());
     addCodec(DataFileConstants.DEFLATE_CODEC, deflateCodec(DEFAULT_DEFLATE_LEVEL));
     addCodec(DataFileConstants.BZIP2_CODEC, bzip2Codec());
     addCodec(DataFileConstants.XZ_CODEC, xzCodec(DEFAULT_XZ_LEVEL));
-    addCodec(DataFileConstants.ZSTANDARD_CODEC, zstandardCodec());
+    addCodec(DataFileConstants.ZSTANDARD_CODEC, zstandardCodec(DEFAULT_ZSTANDARD_LEVEL));
     addCodec(DataFileConstants.SNAPPY_CODEC, snappyCodec());
   }
 
@@ -114,8 +120,6 @@ public abstract class CodecFactory {
     }
     return o;
   }
-
-
 
   /** Adds a new codec implementation.  If name already had
    * a codec associated with it, returns the previous codec. */

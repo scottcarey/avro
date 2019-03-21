@@ -189,7 +189,11 @@
         <artifactId>snappy-java</artifactId>
         <scope>test</scope>
     </dependency>
-
+    <dependency>
+      <groupId>com.github.luben</groupId>
+      <artifactId>zstd-jni</artifactId>
+      <scope>test</scope>
+    </dependency>
   </dependencies>
 </project>
 
